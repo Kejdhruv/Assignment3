@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./ProductPage.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ProductPage() {
   const { UID } = useParams();
   const [data, setData] = useState(null);
   const [size, setSize] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   const userEmail = "demo_user@example.com"; // temporary dummy email
 
@@ -20,7 +21,7 @@ function ProductPage() {
         setData(result);
       } catch (err) {
         console.error("Error fetching product:", err);
-        setError("Failed to load product");
+        toast.error("Failed to load product");
       }
     };
     fetchProduct();
@@ -32,13 +33,14 @@ function ProductPage() {
 
   const handleSubmit = async () => {
     if (!size) {
-      setError("Please select a size before adding to cart");
+      toast.warn("Please select a size before adding to cart");
       return;
     }
 
     const newItem = [
       {
         Email: userEmail,
+        ProductId : data._id , 
         name: data.name,
         brand: data.brand,
         price: data.price,
@@ -46,6 +48,7 @@ function ProductPage() {
         description: data.description,
         image: data.images[0],
         size: size,
+        quantity: quantity,
       },
     ];
 
@@ -58,57 +61,90 @@ function ProductPage() {
 
       if (!res.ok) throw new Error("Failed to add item to cart");
 
-      setMessage("Product added to cart successfully!");
-      setError("");
+      toast.success("✅ Product added to cart successfully!");
     } catch (err) {
       console.error("Error adding to cart:", err);
-      setError("Error adding to cart");
+      toast.error("❌ Error adding product to cart");
     }
   };
 
   if (!data) return <div className="loading">Loading...</div>;
 
   return (
-    <div className="ProductContainer">
-      <div className="product-header">
-        <h1>{data.name}</h1>
-        <p className="brand">{data.brand}</p>
-      </div>
-
-      <div className="product-content">
-        <div className="product-image">
-          <img src={data.images[0]} alt={data.name} />
-        </div>
-
-        <div className="product-details">
-          <p><strong>Material:</strong> {data.material}</p>
-          <p><strong>Price:</strong> ₹{data.price}</p>
-          <p><strong>Description:</strong> {data.description}</p>
-
-          <div className="size-section">
-            <p><strong>Select Size:</strong></p>
-            <div className="SizeOptions">
-              {data.sizes?.map((option) => (
-                <button
-                  key={option}
-                  className={`SizeOption ${size === option ? "active" : ""}`}
-                  onClick={() => handleSize(option)}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+    <>
+      <div className="ProductContainer">
+        <div className="ProductWrapper">
+          {/* LEFT SIDE: IMAGE */}
+          <div className="ProductImageSection">
+            <img
+              src={data.images[0]}
+              alt={data.name}
+              className="MainProductImage"
+            />
           </div>
 
-          <button className="Cartbutton" onClick={handleSubmit}>
-            Add to Cart
-          </button>
+          {/* RIGHT SIDE: DETAILS */}
+          <div className="ProductInfoSection">
+            <h1 className="ProductName">{data.name}</h1>
+            <p className="ProductBrand">
+              {data.brand} <span className="ProductRating">⭐ 4.5/5</span>
+            </p>
 
-          {message && <p className="success">{message}</p>}
-          {error && <p className="error">{error}</p>}
+            <p className="ProductPrice">₹{data.price}</p>
+
+            <p className="ProductDescription">{data.description}</p>
+            <p className="ProductMaterial">
+              <strong>Material:</strong> {data.material}
+            </p>
+
+            <div className="SizeSection">
+              <p className="SectionTitle">Select Size:</p>
+              <div className="SizeOptions">
+                {data.sizesAvailable?.map((option) => (
+                  <button
+                    key={option}
+                    className={`SizeOption ${
+                      size === option ? "active" : ""
+                    }`}
+                    onClick={() => handleSize(option)}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="QuantitySection">
+              <p className="SectionTitle">Quantity:</p>
+              <input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="QuantityInput"
+              />
+            </div>
+
+            <button className="AddToCartButton" onClick={handleSubmit}>
+              🛒 Add to Cart
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+    </>
   );
 }
 

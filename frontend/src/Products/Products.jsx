@@ -24,7 +24,7 @@ function Products() {
       <div className="Cards">
         {data.map((product) => (
           <Link
-            to={`/Product/${product._id}`}
+            to={`/Products/${product._id}`}
             key={product._id}
             className="product-link"
           >
