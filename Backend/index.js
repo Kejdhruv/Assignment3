@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const Fetch = require("./Products/Fetch");
 const FetchProduct = require("./Products/FetchProduct");
+const Cart = require("./User/Cart/Cart");
+const FetchCart = require("./User/Cart/FetchCart");
 
 const PORT = 8000;
 const app = express();
@@ -17,6 +19,7 @@ app.listen(PORT, () => {
   console.log(` Server is running on port ${PORT}`);
 });  
 
+// Fetching Products 
 app.get('/Products', async (req, res) => {
     try {
         const data = await Fetch() ; 
@@ -40,4 +43,44 @@ app.get("/Products/:UID", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+
+//Modyfing Cart 
+app.post('/Cart', async (req, res) => {
+        try {
+            const newData = req.body;
+            if (!Array.isArray(newData)) {
+                return res.status(400).send('Invalid input: data must be an array');
+            }
+            const result = await Cart(newData);
+            res.status(200).json({
+                message: 'Items Added',
+                insertedCount: result.insertedCount, 
+                insertedIds: result.insertedIds 
+            });
+        } catch (err) {
+            console.error('Error adding product to Cart:', err);
+            res.status(500).send('Internal Server Error');
+        }
+});    
+
+
+app.get("/Cart/:Email", async (req, res) => {
+  try {
+    const {Email} = req.params; 
+    const data = await FetchCart(Email);
+    if (!data ) {
+      return res.status(404).send("User Cart not found");
+    }
+    res.send(data);
+  } catch (err) {
+    console.error("Error fetching Product for User through Email ", err);
+    res.status(500).send("Internal Server Error");
+  }
+}); 
+
+
+
+
+    
 
