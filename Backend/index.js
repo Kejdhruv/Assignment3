@@ -15,15 +15,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  res.send("HI");
-});
-
 app.listen(PORT, () => {
   console.log(` Server is running on port ${PORT}`);
 });  
 
 // Fetching Products 
+
 app.get('/Products', async (req, res) => {
     try {
         const data = await Fetch() ; 
@@ -50,6 +47,7 @@ app.get("/Products/:UID", async (req, res) => {
 
 
 //Modyfing Cart 
+
 app.post('/Cart', async (req, res) => {
         try {
             const newData = req.body;
@@ -109,7 +107,7 @@ app.put("/Cart/:cartItemID", async (req, res) => {
 }); 
 
 
-//Posting Order 
+//Orders of User 
 
 app.post('/Order', async (req, res) => {
         try {
