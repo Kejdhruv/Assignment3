@@ -4,6 +4,7 @@ const Fetch = require("./Products/Fetch");
 const FetchProduct = require("./Products/FetchProduct");
 const Cart = require("./User/Cart/Cart");
 const FetchCart = require("./User/Cart/FetchCart");
+const DeleteFromCart = require("./User/Cart/DeleteCart");
 
 const PORT = 8000;
 const app = express();
@@ -79,7 +80,17 @@ app.get("/Cart/:Email", async (req, res) => {
   }
 }); 
 
+app.post('/DeleteFromCart', async (req, res) => {
+  const { Email, ProductID } = req.body;
 
+  try {
+    const result = await DeleteFromCart(Email, ProductID);
+    res.status(200).send(result);
+  } catch (err) {
+    console.error("Error in Deleting from Cart ", err);
+    res.status(500).send({ success: false, message: "Internal Server Error" });
+  }
+}); 
 
 
     
