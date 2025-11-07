@@ -65,7 +65,6 @@ app.post('/Cart', async (req, res) => {
         }
 });    
 
-
 app.get("/Cart/:Email", async (req, res) => {
   try {
     const {Email} = req.params; 
