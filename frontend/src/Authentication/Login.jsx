@@ -54,7 +54,7 @@ export default function Login() {
       });
 
       
-      setTimeout(() => navigate("/Home"), 2100);
+      setTimeout(() => navigate("/Products"), 2100);
 
     } catch (error) {
       console.error("Error during login:", error);
