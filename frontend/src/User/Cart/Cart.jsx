@@ -6,9 +6,16 @@ import "react-toastify/dist/ReactToastify.css";
 function Cart() {
   const [cart, setCart] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [address, setAddress] = useState("");
-  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Checkout form fields
+  const [name, setName] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [phone, setPhone] = useState("");
 
   const userEmail = "demo1_user@example.com"; // dummy email
 
@@ -21,14 +28,14 @@ function Cart() {
         const result = await res.json();
         setCart(result);
       } catch (err) {
-        toast.error("Error loading cart" , err );
+        toast.error("Error loading cart" , err);
       }
     };
     fetchCart();
   }, []);
 
-  // Remove item (frontend only)
-    const removeItem = async (index) => {
+  // Remove item
+  const removeItem = async (index) => {
     const item = cart[index];
     try {
       await fetch(`http://localhost:8000/Cart/${item._id}`, {
@@ -41,7 +48,7 @@ function Cart() {
     }
   };
 
-  // Update quantity (frontend only)
+  // Quantity control
   const handleQuantity = (index, value) => {
     if (value < 1) return;
     const updatedCart = [...cart];
@@ -49,16 +56,16 @@ function Cart() {
     setCart(updatedCart);
   };
 
-  // Calculate total
+  // Total price
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * (item.quantity || 1),
     0
   );
 
-  // Checkout
+  // Checkout handler
   const handleCheckout = async () => {
-    if (!address || !phone) {
-      toast.error("Please fill in address and phone");
+    if (!name || !address1 || !city || !state || !pincode || !phone) {
+      toast.error("Please fill in all details");
       return;
     }
 
@@ -69,7 +76,14 @@ function Cart() {
 
     const orderData = {
       email: userEmail,
-      address,
+      name,
+      address: {
+        line1: address1,
+        line2: address2,
+        city,
+        state,
+        pincode,
+      },
       phone,
       products: cart.map((item) => ({
         name: item.name,
@@ -93,9 +107,14 @@ function Cart() {
 
       toast.success("Order placed successfully!");
       setCart([]);
-      setAddress("");
-      setPhone("");
       setShowModal(false);
+      setName("");
+      setAddress1("");
+      setAddress2("");
+      setCity("");
+      setState("");
+      setPincode("");
+      setPhone("");
     } catch (err) {
       toast.error("Failed to place order" , err );
     } finally {
@@ -107,6 +126,7 @@ function Cart() {
     <div className="cart-page">
       <ToastContainer />
 
+      {/* Cart Section */}
       <div className="cart-left">
         <h2>Your Cart</h2>
         {cart.length === 0 ? (
@@ -134,62 +154,87 @@ function Cart() {
         )}
       </div>
 
-     <div className="cart-right">
-  <h3>Order Summary</h3>
+      {/* Order Summary */}
+      <div className="cart-right">
+        <h3>Order Summary</h3>
 
-  <ul className="summary-items">
-    {cart.map((item) => (
-      <li key={item._id}>
-        <span>{item.name} × {item.quantity}</span>
-        <span>₹{(item.price * item.quantity).toFixed(2)}</span>
-      </li>
-    ))}
-  </ul>
+        <ul className="summary-items">
+          {cart.map((item) => (
+            <li key={item._id}>
+              <span>{item.name} × {item.quantity}</span>
+              <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+            </li>
+          ))}
+        </ul>
 
-  <hr />
+        <hr />
+        <div className="summary-details">
+          <p><span>Subtotal:</span> <span>₹{totalPrice}</span></p>
+          <p><span>Delivery Charges:</span> <span>₹100</span></p>
+          <p className="discount-line"><span>Delivery Discount:</span> <span>-₹100</span></p>
+          <p><span>Reward Points Earned:</span> <span>+{Math.floor(totalPrice / 50)} pts</span></p>
+        </div>
+        <hr />
+        <h4 className="summary-total">
+          <span>Total Payable:</span>
+          <span>₹{totalPrice.toFixed(2)}</span>
+        </h4>
 
-  <div className="summary-details">
-    <p><span>Subtotal:</span> <span>₹{totalPrice}</span></p>
-    <p><span>Delivery Charges:</span> <span>₹100</span></p>
-    <p className="discount-line"><span>Delivery Discount:</span> <span>-₹100</span></p>
-    <p><span>Reward Points Earned:</span> <span>+{Math.floor(totalPrice / 50)} pts</span></p>
-  </div>
+        <p className="delivery-estimate">
+          Estimated delivery: <strong>3–5 days</strong>
+        </p>
 
-  <hr />
+        <button className="checkout-btn" onClick={() => setShowModal(true)} disabled={cart.length === 0}>
+          Proceed to Checkout
+        </button>
 
-  <h4 className="summary-total">
-    <span>Total Payable:</span>
-    <span>₹{totalPrice.toFixed(2)}</span>
-  </h4>
-
-  <p className="delivery-estimate">
-    Estimated delivery: <strong>3–5 days</strong>
-  </p>
-
-  <button className="checkout-btn" onClick={() => setShowModal(true)} disabled={cart.length === 0}>
-    Proceed to Checkout
-  </button>
-
-  <p className="reward-note">✨ Earn 1 point for every ₹50 spent!</p>
-</div>
+        <p className="reward-note">✨ Earn 1 point for every ₹50 spent!</p>
+      </div>
 
       {/* Checkout Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
             <h3>Checkout</h3>
-            <input
-              type="text"
-              placeholder="Enter Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Enter Phone Number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            <div className="checkout-form">
+              <div className="form-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+
+              <div className="form-group">
+                <label>Address Line 1</label>
+                <input type="text" placeholder="Street / House No." value={address1} onChange={(e) => setAddress1(e.target.value)} />
+              </div>
+
+              <div className="form-group">
+                <label>Address Line 2</label>
+                <input type="text" placeholder="Apartment / Landmark" value={address2} onChange={(e) => setAddress2(e.target.value)} />
+              </div>
+
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>City</label>
+                  <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>State</label>
+                  <input type="text" placeholder="State" value={state} onChange={(e) => setState(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Pincode</label>
+                  <input type="text" placeholder="Postal Code" value={pincode} onChange={(e) => setPincode(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>Phone Number</label>
+                  <input type="text" placeholder="Mobile" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                </div>
+              </div>
+            </div>
+
             <div className="modal-actions">
               <button onClick={handleCheckout} disabled={loading}>
                 {loading ? "Processing..." : "Confirm Checkout"}
