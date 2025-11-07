@@ -107,7 +107,8 @@ app.put("/Cart/:cartItemID", async (req, res) => {
 app.post("/Order", authMiddleware, async (req, res) => {
   try {
     const email = req.user.email;
-    const newData = req.body.map((item) => ({ ...item, Email: email }));
+    const name = req.user.name;
+    const newData = req.body.map((item) => ({ ...item, Email: email  , name: name }));
     const result = await Orders(newData);
     res.status(200).json({ message: "Order Placed", insertedCount: result.insertedCount });
   } catch (err) {

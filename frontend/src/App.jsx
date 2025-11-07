@@ -4,6 +4,7 @@ import Products from './Products/Products';
 import ProductPage from './Products/ProductPage';
 import Cart from './User/Cart/Cart';
 import Auth from './Authentication/Auth';
+import Profile from './User/Profile/Profile';
 
 
 function App() {
@@ -13,7 +14,8 @@ function App() {
       <Route path="/Products" element={<Products />} />
       <Route path="/Cart" element={<Cart />} /> 
         <Route path="/" element={<Auth/>} /> 
-       <Route path="/Products/:UID" element={<ProductPage />} />
+      <Route path="/Products/:UID" element={<ProductPage />} />
+        <Route path="/Profile" element={<Profile/>} />
       </Routes>
   );
 }

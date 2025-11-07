@@ -9,7 +9,6 @@ function Cart() {
   const [loading, setLoading] = useState(false);
 
   // Checkout form fields
-  const [name, setName] = useState("");
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
   const [city, setCity] = useState("");
@@ -67,7 +66,7 @@ function Cart() {
 
   // Checkout handler
   const handleCheckout = async () => {
-    if (!name || !address1 || !city || !state || !pincode || !phone) {
+    if (!address1 || !city || !state || !pincode || !phone) {
       toast.error("Please fill in all details");
       return;
     }
@@ -78,7 +77,6 @@ function Cart() {
     }
 
     const orderData = {
-      name,
       address: {
         line1: address1,
         line2: address2,
@@ -111,7 +109,6 @@ function Cart() {
       toast.success("Order placed successfully!");
       setCart([]);
       setShowModal(false);
-      setName("");
       setAddress1("");
       setAddress2("");
       setCity("");
@@ -200,10 +197,6 @@ function Cart() {
           <div className="modal">
             <h3>Checkout</h3>
             <div className="checkout-form">
-              <div className="form-group">
-                <label>Full Name</label>
-                <input type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
-              </div>
 
               <div className="form-group">
                 <label>Address Line 1</label>

@@ -1,0 +1,123 @@
+/* Container */
+.profile-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #f0f2f5;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Logout button */
+.btn-logout {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: #d32f2f;
+}
+
+/* Profile header */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    position: fixed;
+    top: 80px;
+    left: 20px;
+}
+
+.profile-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.profile-email {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Main content */
+.profile-content {
+    margin-left: 300px;
+    padding-top: 50px;
+}
+
+/* Orders list */
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Single order card */
+.order-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Order info */
+.order-info {
+    margin-bottom: 15px;
+}
+
+.label {
+    font-weight: 600;
+}
+
+/* Items grid */
+.items-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Single item card */
+.item-card {
+    flex: 1 1 200px;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.item-card img {
+    width: 120px;       /* smaller width */
+    height: 120px;      /* smaller height */
+    object-fit: cover;  /* ensures image covers the box without stretching */
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.item-name {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* Loading / no orders */
+.text-loading {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+    margin-top: 50px;
+}
