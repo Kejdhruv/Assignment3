@@ -6,6 +6,7 @@ const Cart = require("./User/Cart/Cart");
 const FetchCart = require("./User/Cart/FetchCart");
 const DeleteFromCart = require("./User/Cart/DeleteCart");
 const DeleteCartItem = require("./User/Cart/DeleteCart");
+const UpdateCartQuantity = require("./User/Cart/UpdateCart");
 
 const PORT = 8000;
 const app = express();
@@ -89,7 +90,21 @@ app.delete("/Cart/:cartItemID", async (req, res) => {
     res.status(500).send({ success: false, message: "Internal Server Error" });
   }
 });
+ 
+app.put("/Cart/:cartItemID", async (req, res) => {
+  const { cartItemID } = req.params;
+  const { Quantity } = req.body;
 
+  if (Quantity === undefined || Quantity < 0) {
+    return res.status(400).send({ success: false, message: "Invalid quantity" });
+  }
 
+  try {
+    const result = await UpdateCartQuantity(cartItemID, Quantity);
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(500).send({ success: false, message: "Internal Server Error" });
+  }
+});
     
 
