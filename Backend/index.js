@@ -4,9 +4,10 @@ const Fetch = require("./Products/Fetch");
 const FetchProduct = require("./Products/FetchProduct");
 const Cart = require("./User/Cart/Cart");
 const FetchCart = require("./User/Cart/FetchCart");
-const DeleteFromCart = require("./User/Cart/DeleteCart");
 const DeleteCartItem = require("./User/Cart/DeleteCart");
 const UpdateCartQuantity = require("./User/Cart/UpdateCart");
+const Orders = require("./User/Order/PostingOrder");
+const FetchOrder = require("./User/Order/FetchingOrder");
 
 const PORT = 8000;
 const app = express();
@@ -105,6 +106,39 @@ app.put("/Cart/:cartItemID", async (req, res) => {
   } catch (err) {
     res.status(500).send({ success: false, message: "Internal Server Error" });
   }
-});
-    
+}); 
 
+
+//Posting Order 
+
+app.post('/Order', async (req, res) => {
+        try {
+            const newData = req.body;
+            if (!Array.isArray(newData)) {
+                return res.status(400).send('Invalid input: data must be an array');
+            }
+            const result = await Orders(newData);
+            res.status(200).json({
+                message: 'Items Added',
+                insertedCount: result.insertedCount, 
+                insertedIds: result.insertedIds 
+            });
+        } catch (err) {
+            console.error('Error Posting Order', err);
+            res.status(500).send('Internal Server Error');
+        }
+});  
+    
+app.get("/Order/:Email", async (req, res) => {
+  try {
+    const {Email} = req.params; 
+    const data = await FetchOrder(Email);
+    if (!data ) {
+      return res.status(404).send("User Order not found");
+    }
+    res.send(data);
+  } catch (err) {
+    console.error("Error fetching Product for User through Email ", err);
+    res.status(500).send("Internal Server Error");
+  }
+}); 
