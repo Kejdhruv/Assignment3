@@ -10,7 +10,7 @@ function Cart() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const userEmail = "demo1_user@example.com"; // dummy email for now
+  const userEmail = "demo1_user@example.com"; // dummy email
 
   // Fetch cart
   useEffect(() => {
@@ -21,14 +21,14 @@ function Cart() {
         const result = await res.json();
         setCart(result);
       } catch (err) {
-        toast.error("Error loading cart" , err);
+        toast.error("Error loading cart" , err );
       }
     };
     fetchCart();
   }, []);
 
-  // Remove item
-  const removeItem = async (index) => {
+  // Remove item (frontend only)
+    const removeItem = async (index) => {
     const item = cart[index];
     try {
       await fetch(`http://localhost:8000/Cart/${item._id}`, {
@@ -37,171 +37,164 @@ function Cart() {
       setCart(cart.filter((_, i) => i !== index));
       toast.success("Item removed!");
     } catch (err) {
-      toast.error("Failed to remove item" , err );
+      toast.error("Failed to remove item" , err);
     }
   };
 
-  // Update quantity
- const handleQuantity = async (index, value) => {
-  if (value < 1) return;
-
-  const updatedCart = [...cart];
-  const item = updatedCart[index];
-  updatedCart[index].quantity = value;
-  setCart(updatedCart); // update UI instantly
-
-  try {
-    const res = await fetch(`http://localhost:8000/Cart/${item._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quantity: value }),
-    });
-
-    if (!res.ok) throw new Error("Failed to update quantity");
-    toast.success(`${item.name} quantity updated`);
-  } catch (err) {
-    console.error("Error updating quantity:", err);
-    toast.error("Failed to update quantity in backend");
-  }
-};
+  // Update quantity (frontend only)
+  const handleQuantity = (index, value) => {
+    if (value < 1) return;
+    const updatedCart = [...cart];
+    updatedCart[index].quantity = value;
+    setCart(updatedCart);
+  };
 
   // Calculate total
   const totalPrice = cart.reduce(
-    (acc, item) => acc + item.price * (item.quantity || 1),
+    (sum, item) => sum + item.price * (item.quantity || 1),
     0
   );
 
-  // Checkout handler
- const handleCheckout = async () => {
-  if (!address || !phone) {
-    toast.error("Please fill in address and phone");
-    return;
-  }
+  // Checkout
+  const handleCheckout = async () => {
+    if (!address || !phone) {
+      toast.error("Please fill in address and phone");
+      return;
+    }
 
-  if (cart.length === 0) {
-    toast.error("Your cart is empty");
-    return;
-  }
+    if (cart.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
 
-  setLoading(true);
+    const orderData = {
+      email: userEmail,
+      address,
+      phone,
+      products: cart.map((item) => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity || 1,
+        image: item.image,
+      })),
+      total: totalPrice,
+      date: new Date().toISOString(),
+    };
 
-  const orderData = {
-    userEmail: "demo1_user@example.com", // replace with actual user email later
-    address,
-    phone,
-    products: cart.map((item) => ({
-      productId: item._id,
-      name: item.name,
-      brand: item.brand,
-      price: item.price,
-      quantity: item.quantity,
-      size: item.size,
-      image: item.image,
-    })),
-    totalAmount: cart.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    ),
-    orderDate: new Date().toISOString(),
+    try {
+      setLoading(true);
+      const res = await fetch("http://localhost:8000/Order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([orderData]),
+      });
+
+      if (!res.ok) throw new Error("Order failed");
+
+      toast.success("Order placed successfully!");
+      setCart([]);
+      setAddress("");
+      setPhone("");
+      setShowModal(false);
+    } catch (err) {
+      toast.error("Failed to place order" , err );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  try {
-    const res = await fetch("http://localhost:8000/Order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([orderData]),
-    });
-
-    if (!res.ok) throw new Error("Failed to save order");
-
-    toast.success("Order placed successfully!");
-
-    // clear frontend states
-    setCart([]);
-    setAddress("");
-    setPhone("");
-    setShowModal(false);
-  } catch (err) {
-    console.error("Error placing order:", err);
-    toast.error("Error placing order");
-  } finally {
-    setLoading(false);
-  }
-};
-
   return (
-    <div className="CartContainer">
-      <ToastContainer position="top-center" />
-      <h1 className="CartTitle">Your Cart 🛒</h1>
+    <div className="cart-page">
+      <ToastContainer />
 
-      {cart.length === 0 ? (
-        <p className="EmptyCart">Your cart is empty.</p>
-      ) : (
-        <div className="CartItems">
-          {cart.map((item, index) => (
-            <div className="CartItem" key={item._id}>
-              <img src={item.image} alt={item.name} className="CartItemImage" />
-              <div className="CartItemInfo">
+      <div className="cart-left">
+        <h2>Your Cart</h2>
+        {cart.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          cart.map((item, index) => (
+            <div className="cart-item" key={index}>
+              <img src={item.image} alt={item.name} />
+              <div className="cart-details">
                 <h3>{item.name}</h3>
-                <p>{item.brand}</p>
-                <p>Size: {item.size}</p>
                 <p>₹{item.price}</p>
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity || 1}
-                  className="QuantityBox"
-                  onChange={(e) => handleQuantity(index, e.target.value)}
-                />
+                <div className="quantity-control">
+                  <button onClick={() => handleQuantity(index, item.quantity - 1)}>-</button>
+                  <input
+                    type="number"
+                    value={item.quantity || 1}
+                    onChange={(e) => handleQuantity(index, parseInt(e.target.value))}
+                  />
+                  <button onClick={() => handleQuantity(index, item.quantity + 1)}>+</button>
+                </div>
               </div>
-              <button className="RemoveBtn" onClick={() => removeItem(index)}>
-                ✖
-              </button>
+              <button className="remove-btn" onClick={() => removeItem(index)}>Remove</button>
             </div>
-          ))}
+          ))
+        )}
+      </div>
 
-          <div className="CartSummary">
-            <h2>Total: ₹{totalPrice}</h2>
-            <button className="CheckoutBtn" onClick={() => setShowModal(true)}>
-              Checkout
-            </button>
-          </div>
-        </div>
-      )}
+     <div className="cart-right">
+  <h3>Order Summary</h3>
+
+  <ul className="summary-items">
+    {cart.map((item) => (
+      <li key={item._id}>
+        <span>{item.name} × {item.quantity}</span>
+        <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+      </li>
+    ))}
+  </ul>
+
+  <hr />
+
+  <div className="summary-details">
+    <p><span>Subtotal:</span> <span>₹{totalPrice}</span></p>
+    <p><span>Delivery Charges:</span> <span>₹100</span></p>
+    <p className="discount-line"><span>Delivery Discount:</span> <span>-₹100</span></p>
+    <p><span>Reward Points Earned:</span> <span>+{Math.floor(totalPrice / 50)} pts</span></p>
+  </div>
+
+  <hr />
+
+  <h4 className="summary-total">
+    <span>Total Payable:</span>
+    <span>₹{totalPrice.toFixed(2)}</span>
+  </h4>
+
+  <p className="delivery-estimate">
+    Estimated delivery: <strong>3–5 days</strong>
+  </p>
+
+  <button className="checkout-btn" onClick={() => setShowModal(true)} disabled={cart.length === 0}>
+    Proceed to Checkout
+  </button>
+
+  <p className="reward-note">✨ Earn 1 point for every ₹50 spent!</p>
+</div>
 
       {/* Checkout Modal */}
       {showModal && (
-        <div className="ModalOverlay">
-          <div className="ModalContent">
-            <h2>Checkout</h2>
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Checkout</h3>
             <input
               type="text"
-              placeholder="Full Address"
+              placeholder="Enter Address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="ModalInput"
             />
             <input
               type="text"
-              placeholder="Phone Number"
+              placeholder="Enter Phone Number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="ModalInput"
             />
-            <div className="ModalButtons">
-              <button
-                className="ConfirmBtn"
-                onClick={handleCheckout}
-                disabled={loading}
-              >
+            <div className="modal-actions">
+              <button onClick={handleCheckout} disabled={loading}>
                 {loading ? "Processing..." : "Confirm Checkout"}
               </button>
-              <button
-                className="CancelBtn"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
+              <button className="cancel" onClick={() => setShowModal(false)}>Cancel</button>
             </div>
           </div>
         </div>
