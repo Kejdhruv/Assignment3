@@ -68,9 +68,9 @@ export default function Login() {
   return (
     <div className="form-container">
       <form className="form" onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={Email} onChange={handleEmailChange} required />
-        <input type="password" placeholder="Password" value={Password} onChange={handlePasswordChange} required />
-        <button type="submit">Login</button>
+        <input type="email" placeholder="Email" value={Email} onChange={handleEmailChange} className="SignUp" required />
+        <input type="password" placeholder="Password" value={Password} onChange={handlePasswordChange} className="SignUp" required />
+        <button type="submit"className="SignBtn">Login</button>
       </form>
       <p className="form-footer">
         Forgot password? <span className="link">Click here</span>

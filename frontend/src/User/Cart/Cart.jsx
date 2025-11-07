@@ -17,13 +17,16 @@ function Cart() {
   const [pincode, setPincode] = useState("");
   const [phone, setPhone] = useState("");
 
-  const userEmail = "demo1_user@example.com"; // dummy email
 
   // Fetch cart
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/Cart/${userEmail}`);
+          const res = await fetch("http://localhost:8000/Cart", {
+        method: "GET",
+        credentials: "include", // <--- important to send cookies
+      });
+
         if (!res.ok) throw new Error("Failed to fetch cart");
         const result = await res.json();
         setCart(result);
@@ -75,7 +78,6 @@ function Cart() {
     }
 
     const orderData = {
-      email: userEmail,
       name,
       address: {
         line1: address1,
@@ -101,6 +103,7 @@ function Cart() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify([orderData]),
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("Order failed");

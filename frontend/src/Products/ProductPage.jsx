@@ -10,7 +10,6 @@ function ProductPage() {
   const [size, setSize] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  const userEmail = "demo1_user@example.com"; // temporary dummy email
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -39,7 +38,6 @@ function ProductPage() {
 
     const newItem = [
       {
-        Email: userEmail,
         ProductId : data._id , 
         name: data.name,
         brand: data.brand,
@@ -57,6 +55,7 @@ function ProductPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newItem),
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("Failed to add item to cart");

@@ -2,8 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const cookieParser = require("cookie-parser")
 // Internal imports
+const { authMiddleware } = require("./Middleware/DecodeToken");
 const Fetch = require("./Products/Fetch");
 const FetchProduct = require("./Products/FetchProduct");
 const Cart = require("./User/Cart/Cart");
@@ -18,6 +19,7 @@ const CreateUser = require("./User/Authentication/CreateUser");
 const PORT = 8000;
 const app = express();
 
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -54,21 +56,22 @@ app.get("/Products/:UID", async (req, res) => {
 });
 
 // ---------------- Cart ----------------
-app.post("/Cart", async (req, res) => {
+app.post("/Cart", authMiddleware, async (req, res) => {
   try {
-    const newData = req.body;
-    if (!Array.isArray(newData)) return res.status(400).send("Invalid input: data must be an array");
+    const Email = req.user.email;
+    const newData = req.body.map((item) => ({ ...item, Email: Email }));
     const result = await Cart(newData);
-    res.status(200).json({ message: "Items Added", insertedCount: result.insertedCount, insertedIds: result.insertedIds });
+    res.status(200).json({ message: "Items Added", insertedCount: result.insertedCount });
   } catch (err) {
     console.error("Error adding to cart:", err);
     res.status(500).send("Internal Server Error");
   }
 });
 
-app.get("/Cart/:Email", async (req, res) => {
+// GET user’s cart using email from token
+app.get("/Cart", authMiddleware, async (req, res) => {
   try {
-    const { Email } = req.params;
+    const Email = req.user.email;
     const data = await FetchCart(Email);
     if (!data) return res.status(404).send("User cart not found");
     res.send(data);
@@ -101,21 +104,23 @@ app.put("/Cart/:cartItemID", async (req, res) => {
 });
 
 // ---------------- Orders ----------------
-app.post("/Order", async (req, res) => {
+app.post("/Order", authMiddleware, async (req, res) => {
   try {
-    const newData = req.body;
-    if (!Array.isArray(newData)) return res.status(400).send("Invalid input: data must be an array");
+    const email = req.user.email;
+    const newData = req.body.map((item) => ({ ...item, Email: email }));
     const result = await Orders(newData);
-    res.status(200).json({ message: "Items Added", insertedCount: result.insertedCount, insertedIds: result.insertedIds });
+    res.status(200).json({ message: "Order Placed", insertedCount: result.insertedCount });
   } catch (err) {
     console.error("Error posting order:", err);
     res.status(500).send("Internal Server Error");
   }
 });
 
-app.get("/Order/:Email", async (req, res) => {
+// GET orders using email from token
+app.get("/Order", authMiddleware, async (req, res) => {
   try {
-    const data = await FetchOrder(req.params.Email);
+    const Email = req.user.email;
+    const data = await FetchOrder(Email);
     if (!data) return res.status(404).send("User order not found");
     res.send(data);
   } catch (err) {

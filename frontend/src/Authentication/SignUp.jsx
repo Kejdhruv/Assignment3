@@ -61,15 +61,13 @@ export default function SignUp({ onSignupSuccess }) {
   return (
     <div className="form-container">
       <form className="form" onSubmit={handleSubmit}>
-        <input type="text" placeholder="Full Name" value={Username} onChange={handleNameChange} required />
-        <input type="email" placeholder="Email" value={Email} onChange={handleEmailChange} required />
-        <input type="password" placeholder="Password" value={Password} onChange={handlePasswordChange} required />
-        <button type="submit">Sign Up</button>
+        <input type="text" placeholder="Full Name" value={Username} onChange={handleNameChange}  className="SignUp" required />
+        <input type="email" placeholder="Email" value={Email} onChange={handleEmailChange} className="SignUp" required />
+        <input type="password" placeholder="Password" value={Password} onChange={handlePasswordChange} className="SignUp" required />
+        <button type="submit" className="SignBtn">Sign Up</button>
       </form>
 
-      <p className="form-footer">
-        Already have an account? <span className="link" onClick={onSignupSuccess}>Login</span>
-      </p>
+     
 
       <ToastContainer />
     </div>
