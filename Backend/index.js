@@ -164,7 +164,7 @@ app.post("/Auth/Login", async (req, res) => {
         name: existingUser.username,
         email: existingUser.email,
       },
-      process.env.TOKEN_SECRET || "secret123",
+       "SecretToken",
       { expiresIn: "1h" }
     );
 
