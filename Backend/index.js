@@ -204,4 +204,6 @@ app.get("/Auth/Logout", (req, res) => {
     console.error("Error logging out:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
-});
+}); 
+
+
