@@ -10,7 +10,7 @@ function ProductPage() {
   const [size, setSize] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  const userEmail = "demo_user@example.com"; // temporary dummy email
+  const userEmail = "demo1_user@example.com"; // temporary dummy email
 
   useEffect(() => {
     const fetchProduct = async () => {
