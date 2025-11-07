@@ -1,0 +1,152 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Barlow", sans-serif;
+}
+
+/* Page container */
+.ProductContainer {
+  width: 90%;
+  margin: 5% auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+/* Header (name + brand) */
+.product-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.product-header h1 {
+  font-size: 40px;
+  color: #000;
+  font-weight: 600;
+}
+
+.product-header .brand {
+  color: grey;
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+/* Layout: image left, details right */
+.product-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 60px;
+}
+
+/* Product image box */
+.product-image {
+  width: 400px;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Product details panel */
+.product-details {
+  width: 450px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-details p {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #222;
+}
+
+/* Size selector section */
+.size-section {
+  margin: 20px 0;
+}
+
+.SizeOptions {
+  margin-top: 10px;
+}
+
+.SizeOption {
+  margin: 5px;
+  padding: 8px 18px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  color: #333;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-size: 14px;
+}
+
+.SizeOption:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.SizeOption.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Add to Cart button */
+.Cartbutton {
+  background-color: rgb(101, 183, 101);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+}
+
+.Cartbutton:hover {
+  background-color: rgb(80, 160, 80);
+}
+
+.Cartbutton:active {
+  background-color: rgb(60, 140, 60);
+}
+
+/* Success & Error messages */
+.success {
+  color: green;
+  margin-top: 10px;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .product-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-details {
+    width: 100%;
+  }
+
+  .product-image {
+    width: 90%;
+    height: auto;
+  }
+}
