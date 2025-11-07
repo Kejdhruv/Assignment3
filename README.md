@@ -4,6 +4,24 @@ Users can browse products, manage their cart, place orders, and view profile inf
 
 ---
 
+## Screenshots
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+
+  <img src="https://github.com/user-attachments/assets/43422aa3-3f7c-4652-890a-f00b314d4cb2" alt="Screenshot 1" width="33%" />
+  <img src="https://github.com/user-attachments/assets/e3bf100f-50bc-4945-9fc6-47bc4e269bd0" alt="Screenshot 2" width="33%" />
+  <img src="https://github.com/user-attachments/assets/2ea6b51c-fbcd-4c33-990c-918f1a7a0a77" alt="Screenshot 3" width="33%" />
+  
+  <img src="https://github.com/user-attachments/assets/04be36fe-5b2c-4934-ad61-9f4111e99923" alt="Screenshot 4" width="33%" />
+  <img src="https://github.com/user-attachments/assets/9449bf10-a6d4-428f-bf96-d9ed85df0e70" alt="Screenshot 5" width="33%" />
+  <img src="https://github.com/user-attachments/assets/10776bbe-19b2-4c63-88e8-1cd171de9dfd" alt="Screenshot 6" width="33%" />
+
+</div>
+
+
+
+---
+
 ## Features
 
 - **User Authentication:** Sign up and login using JWT tokens for secure authentication.  
